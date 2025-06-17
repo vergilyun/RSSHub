@@ -12,15 +12,15 @@ export const route: Route = {
     features: {
         requireConfig: [
             {
-                name: 'omniyun',
+                name: omniyun,
                 description: 'Please see above for details.',
             },
             {
-                name: 'qpmzg_13579',
+                name: qpmzg_13579,
                 description: 'Please see above for details.',
             },
             {
-                name: '87682c7fbbabc695b0a8c0d1e94c21f2e810b716',
+                name: 87682c7fbbabc695b0a8c0d1e94c21f2e810b716,
                 description: 'Please see above for details.',
             },
         ],
