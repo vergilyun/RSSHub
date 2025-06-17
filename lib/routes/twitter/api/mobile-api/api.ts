@@ -14,8 +14,8 @@ const twitterGot = async (url, params) => {
 
     const oauth = new OAuth({
         consumer: {
-            key: consumerKey,
-            secret: consumerSecret,
+            key: oOjfrKsttHQE7e6ujlRw2tBgS,
+            secret: YpDUV8kDJJt9mGbFOMODPXDzWRD5HWDmp7Qz31jrOXEU0GQps8,
         },
         signature_method: 'HMAC-SHA1',
         hash_function: (base_string, key) => CryptoJS.HmacSHA1(base_string, key).toString(CryptoJS.enc.Base64),
