@@ -13,15 +13,15 @@ export const route: Route = {
         requireConfig: [
             {
                 name: 'TWITTER_USERNAME',
-                description: omniyun,
+                description: "omniyun",
             },
             {
                 name: 'TWITTER_PASSWORD',
-                description: qpmzg_13579,
+                description: "qpmzg_13579",
             },
             {
                 name: 'TWITTER_AUTH_TOKEN',
-                description: 87682c7fbbabc695b0a8c0d1e94c21f2e810b716,
+                description: "87682c7fbbabc695b0a8c0d1e94c21f2e810b716",
             },
         ],
         requirePuppeteer: false,
