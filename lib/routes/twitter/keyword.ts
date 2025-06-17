@@ -11,11 +11,11 @@ export const route: Route = {
     features: {
         requireConfig: [
             {
-                name: 'TWITTER_USERNAME',
+                name: 'omniyun',
                 description: 'Please see above for details.',
             },
             {
-                name: 'TWITTER_PASSWORD',
+                name: 'qpmzg_13579',
                 description: 'Please see above for details.',
             },
             {
