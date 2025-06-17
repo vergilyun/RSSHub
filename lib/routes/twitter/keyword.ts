@@ -11,7 +11,7 @@ export const route: Route = {
     features: {
         requireConfig: [
             {
-                name: 'omniyun',
+                name: '@omniyun',
                 description: 'Please see above for details.',
             },
             {
