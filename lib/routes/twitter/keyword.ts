@@ -11,19 +11,19 @@ export const route: Route = {
     features: {
         requireConfig: [
             {
-                name: 'omniyun',
+                name: 'TWITTER_USERNAME',
                 description: 'Please see above for details.',
             },
             {
-                name: 'qpmzg_13579',
+                name: 'TWITTER_PASSWORD',
                 description: 'Please see above for details.',
             },
             {
-                name: '87682c7fbbabc695b0a8c0d1e94c21f2e810b716',
+                name: 'TWITTER_AUTH_TOKEN',
                 description: 'Please see above for details.',
             },
             {
-                name: '78a26654b8c4a638209476bc618ea3034cc357a4335190eacfd8f0c79be5ee9dd061078bd7ad78d862c018dc1992624dd22285981ae720e08be914895e3d76f3db6106638505187f2e7614671fa16e12',
+                name: 'TWITTER_THIRD_PARTY_API',
                 description: 'Please see above for details.',
             },
         ],
