@@ -71,9 +71,11 @@ async function handler(ctx) {
 
     const items = data.hits.map((item) => {
         const { pageURL, tags, user } = item;
+        const lastSlashIndex = pageURL.lastIndexOf('/');
+        const secondLastSlashIndex = pageURL.lastIndexOf('/', lastSlashIndex - 1);
         return {
             title: pageURL
-                .substring(pageURL.lastIndexOf('/', pageURL.lastIndexOf('/') - 1) + 1, pageURL.lastIndexOf('/'))
+                .slice(secondLastSlashIndex + 1, lastSlashIndex)
                 .replace(/(-\d+)$/, '')
                 .replaceAll('-', ' '),
             description: renderToString(<PixabayImage item={item} />),
@@ -87,8 +89,8 @@ async function handler(ctx) {
         title: `Search ${q} - Pixabay`,
         description: 'Download & use free nature stock photos in high resolution ✓ New free images everyday ✓ HD to 4K ✓ Best nature pictures for all devices on Pixabay',
         link: `${baseUrl}/images/search/${q}/${order === 'latest' ? '?order=latest' : ''}`,
-        image: `https://pixabay.com/apple-touch-icon.png`,
-        language: 'en',
+        image: 'https://pixabay.com/apple-touch-icon.png',
+        language: 'en' as const,
         item: items,
     };
 }

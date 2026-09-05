@@ -4,7 +4,7 @@ import { renderToString } from 'hono/jsx/dom/server';
 
 import { config } from '@/config';
 import ConfigNotFoundError from '@/errors/types/config-not-found';
-import type { Route } from '@/types';
+import type { DataItem, Route } from '@/types';
 import { ViewType } from '@/types';
 import cache from '@/utils/cache';
 import { getSubPath } from '@/utils/common-utils';
@@ -12,22 +12,14 @@ import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
 const toSize = (raw) => {
-    const matches = raw.match(/(\d+(\.\d+)?)(\w+)/);
+    const matches = raw.match(/(\d+(\.\d+)?)(\D\w*)/);
     return matches[3] === 'GB' ? matches[1] * 1024 : matches[1];
 };
 
-const renderDescription = ({ info, videoSrc, videoPreview, magnets, thumbs }) =>
+const renderDescription = ({ info, magnets, thumbs }) =>
     renderToString(
         <>
             {info ? raw(info) : null}
-            <br />
-            {videoSrc ? <a href={videoSrc}>觀看完整影片</a> : null}
-            <br />
-            {videoPreview ? (
-                <video controls>
-                    <source src={videoPreview} type="video/mp4" />
-                </video>
-            ) : null}
             <br />
             <h4>磁力連結投稿</h4>
             <table>
@@ -81,7 +73,7 @@ export const route: Route = {
 };
 
 async function handler(ctx) {
-    const isWestern = /^\/western/.test(getSubPath(ctx));
+    const isWestern = getSubPath(ctx).startsWith('/western');
     const domain = ctx.req.query('domain') ?? 'javbus.com';
     const westernDomain = ctx.req.query('western_domain') ?? 'javbus.org';
 
@@ -111,19 +103,20 @@ async function handler(ctx) {
     let items = $('.movie-box')
         .slice(0, ctx.req.query('limit') ? Number.parseInt(ctx.req.query('limit')) : 50)
         .toArray()
-        .map((item) => {
-            item = $(item);
+        .map((item): DataItem => {
+            const $item = $(item);
 
             return {
-                link: item.attr('href'),
-                guid: item.find('date').first().text(),
-                pubDate: parseDate(item.find('date').last().text()),
+                link: $item.attr('href'),
+                guid: $item.find('date').first().text(),
+                pubDate: parseDate($item.find('date').last().text()),
+                title: '',
             };
         });
 
     items = await Promise.all(
         items.map((item) =>
-            cache.tryGet(item.link, async () => {
+            cache.tryGet(item.link!, async () => {
                 const detailResponse = await got({
                     method: 'get',
                     url: item.link,
@@ -153,16 +146,16 @@ async function handler(ctx) {
                         .toArray()
                         .map((i) => {
                             const thumbSrc = content(i).attr('href');
-                            return thumbSrc.startsWith('http') ? thumbSrc : `${rootUrl}${thumbSrc}`;
+                            return thumbSrc!.startsWith('http') ? thumbSrc : `${rootUrl}${thumbSrc}`;
                         }),
                 };
 
-                let magnets, videoSrc, videoPreview;
+                let magnets;
 
                 // To fetch magnets.
 
                 try {
-                    const matches = detailResponse.data.match(/var gid = (\d+);[\S\s]*var uc = (\d+);[\S\s]*var img = '(.*)';/);
+                    const matches = detailResponse.data.match(/var gid = (\d+);[\s\S]*var uc = (\d+);[\s\S]*var img = '(.*)';/);
 
                     const magnetResponse = await got({
                         method: 'get',
@@ -203,24 +196,6 @@ async function handler(ctx) {
                     // no-empty
                 }
 
-                // If the video is not western, go fetch preview.
-
-                if (!isWestern) {
-                    try {
-                        const avgleResponse = await got({
-                            method: 'get',
-                            url: `https://api.avgle.com/v1/jav/${item.guid}/0`,
-                        });
-
-                        // full video
-                        videoSrc = avgleResponse.data.response.videos[0]?.embedded_url ?? '';
-                        // video preview
-                        videoPreview = avgleResponse.data.response.videos[0]?.preview_video_url ?? '';
-                    } catch {
-                        // no-empty
-                    }
-                }
-
                 item.author = cacheIn.author;
                 item.title = cacheIn.title;
                 item.category = cacheIn.category;
@@ -228,8 +203,6 @@ async function handler(ctx) {
                     info: cacheIn.info,
                     thumbs: cacheIn.thumbs,
                     magnets,
-                    videoSrc,
-                    videoPreview,
                 });
 
                 return item;
