@@ -8,7 +8,7 @@ import { parseDate } from '@/utils/parse-date';
 const host = 'https://www.shmtu.edu.cn';
 
 async function loadContent(link) {
-    const response = await got.get(link, { https: { rejectUnauthorized: false } });
+    const response = await got(link);
     const $ = load(response.data);
 
     return $('article').html();
@@ -59,19 +59,18 @@ async function handler(ctx) {
         headers: {
             Referer: host,
         },
-        https: { rejectUnauthorized: false },
     });
 
     const $ = load(response.data);
     const list = $('tbody tr')
         .toArray()
         .map((item) => {
-            item = $(item);
-            const category = item.find('.department').text().trim();
+            const $item = $(item);
+            const category = $item.find('.department').text().trim();
             return {
-                title: item.find('.title a').text().trim(),
-                link: new URL(item.find('a').attr('href'), host).href,
-                pubDate: parseDate(item.find('.date-display-single').attr('content')),
+                title: $item.find('.title a').text().trim(),
+                link: new URL($item.find('a').attr('href')!, host).href,
+                pubDate: parseDate($item.find('.date-display-single').attr('content')!),
                 category,
                 author: category,
             };
