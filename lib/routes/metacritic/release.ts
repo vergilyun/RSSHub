@@ -18,6 +18,9 @@ const handler = async (ctx) => {
             type = 'available';
             title = 'All Releases';
             break;
+        default:
+            // defaults to 'new-releases'
+            break;
     }
 
     const url = `https://www.metacritic.com/browse/games/release-date/${type}/${ctx.req.param('platform')}/${sort}`;
@@ -52,4 +55,5 @@ const handler = async (ctx) => {
         })),
     };
 };
+// TODO: missing route export
 export default handler;
