@@ -1,6 +1,6 @@
 import { load } from 'cheerio';
 
-import type { Route } from '@/types';
+import type { Data, Route } from '@/types';
 import got from '@/utils/got';
 import timezone from '@/utils/timezone';
 
@@ -32,7 +32,7 @@ async function handler(ctx) {
         searchconcerned: owner ?? '',
     };
 
-    const result = {
+    const result: Data = {
         title: `ประกาศสำนักงานที่ดิน${province ? 'จังหวัด' + province + ' ' : ''}${office ? 'สำนักงานที่ดิน' + office : ''}${owner ? 'ชื่อผู้ถือกรรมสิทธิ/ผู้ขอ ' + owner : ''}`,
         link: `${baseUrl}/index.php`,
         item: [],
@@ -50,7 +50,7 @@ async function handler(ctx) {
                 return result;
             }
 
-            queryParams.searchprovince = slcProvince.attr('value');
+            queryParams.searchprovince = slcProvince.attr('value')!;
         }
 
         if (office) {
@@ -60,25 +60,21 @@ async function handler(ctx) {
                 return result;
             }
 
-            queryParams.searchoffice = slcOffice.attr('value');
+            queryParams.searchoffice = slcOffice.attr('value')!;
         }
     }
 
     result.link = `${baseUrl}/index.php?${new URLSearchParams(queryParams).toString()}`;
 
-    const { data: response } = await got(result.link, {
-        https: {
-            rejectUnauthorized: false,
-        },
-    });
+    const { data: response } = await got(result.link);
     const $ = load(response);
 
     result.item = $('div#div table tbody tr:not([class])')
         .toArray()
         .map((item) => {
-            item = $(item);
+            const $item = $(item);
             /** @type cheerio.Cheerio<th>[] */
-            const [, topic, requester, reqType, anceBegDate, anceEndDate, officeName, anceFile] = item
+            const [, topic, requester, reqType, anceBegDate, anceEndDate, officeName, anceFile] = $item
                 .find('th')
                 .toArray()
                 .map((item) => $(item));
@@ -99,7 +95,7 @@ async function handler(ctx) {
                         Number.parseInt(dateList[1]) - 1,
                         Number.parseInt(dateList[0])
                     ),
-                    +7
+                    7
                 ),
                 author: officeName.text(),
                 category: [reqType.text()],
