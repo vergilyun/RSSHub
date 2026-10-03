@@ -5,7 +5,6 @@
 .env
 .eslintcache
 .idea
-.pre-commit-config.yaml
 .log
 .now
 .roomodes
@@ -40,3 +39,5 @@ package-lock.json
 # pnpm-lock.yaml
 yarn.lock
 yarn-error.log
+
+dist-container

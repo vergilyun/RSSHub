@@ -20,15 +20,14 @@ export const route: Route = {
     handler,
     features: {
         nsfw: true,
+        requirePuppeteer: false,
     },
 };
 
 async function handler(ctx) {
     const { cast } = ctx.req.param();
 
-    const response = await ofetch(`${baseUrl}/api/casts/${cast}?page=0`, {
-        headers,
-    });
+    const response = await ofetch(`${baseUrl}/api/casts/${cast}?page=0`, { headers });
 
     const list = parseList(response.videos);
 
