@@ -13,7 +13,8 @@ export const hdGallery = (gallery) =>
     gallery.map((item) => {
         if (item.startsWith('https://pics.dmm.co.jp/')) {
             return item.replace(/-(\d+)\.jpg$/, 'jp-$1.jpg');
-        } else if (item.startsWith('https://image.mgstage.com/')) {
+        }
+        if (item.startsWith('https://image.mgstage.com/')) {
             return item.replace(/cap_t1_/, 'cap_e_');
         }
         return item;
@@ -28,9 +29,7 @@ export const parseList = (videos) =>
     }));
 
 export const getItem = async (item) => {
-    const response = await ofetch(`${baseUrl}/api/video/${item.contentId}`, {
-        headers,
-    });
+    const response = await ofetch(`${baseUrl}/api/video/${item.contentId}`, { headers });
 
     const videoInfo: Video = response.video;
     videoInfo.gallery = hdGallery(videoInfo.gallery);
